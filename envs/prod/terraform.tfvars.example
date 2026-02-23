@@ -1,0 +1,41 @@
+name_prefix = "mr-secure-prod"
+tenant_id   = "00000000-0000-0000-0000-000000000000"
+
+primary_location   = "uksouth"
+secondary_location = "ukwest"
+
+primary_rg_name   = "rg-mr-secure-prod-uksouth"
+secondary_rg_name = "rg-mr-secure-prod-ukwest"
+
+primary_hub_address_space   = "10.20.0.0/16"
+secondary_hub_address_space = "10.21.0.0/16"
+
+primary_app_spoke_address_space    = "10.22.0.0/16"
+primary_data_spoke_address_space   = "10.23.0.0/16"
+secondary_app_spoke_address_space  = "10.24.0.0/16"
+secondary_data_spoke_address_space = "10.25.0.0/16"
+
+primary_hub_firewall_subnet_prefix   = "10.20.0.0/26"
+secondary_hub_firewall_subnet_prefix = "10.21.0.0/26"
+
+primary_app_aks_subnet_prefix   = "10.22.0.0/24"
+secondary_app_aks_subnet_prefix = "10.24.0.0/24"
+
+primary_data_sql_subnet_prefix   = "10.23.0.0/24"
+secondary_data_sql_subnet_prefix = "10.25.0.0/24"
+
+aks_primary_node_count   = 5
+aks_secondary_node_count = 3
+aks_node_size            = "Standard_DS3_v2"
+
+sql_admin_username = "sqladminuser"
+sql_admin_password = "CHANGE_ME_Str0ng!"
+sql_sku_name       = "GP_Gen5_4"
+
+storage_account_name_prefix = "mrsecureprodstor"
+
+tags = {
+  environment = "prod"
+  workload    = "multi-region-secure-azure"
+}
+
