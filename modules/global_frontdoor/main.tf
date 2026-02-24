@@ -9,8 +9,3 @@ resource "azurerm_cdn_frontdoor_endpoint" "this" {
   name                     = "${var.name_prefix}-afd-endpoint"
   cdn_frontdoor_profile_id = azurerm_cdn_frontdoor_profile.this.id
 }
-
-output "endpoint_hostname" {
-  value = azurerm_cdn_frontdoor_endpoint.this.host_name
-}
-

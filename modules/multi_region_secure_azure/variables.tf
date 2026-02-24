@@ -128,6 +128,134 @@ variable "tenant_id" {
   description = "Azure AD tenant ID used for Key Vault."
 }
 
+variable "sql_failover_grace_minutes" {
+  type        = number
+  description = "Grace period in minutes before automatic SQL failover is triggered."
+  default     = 60
+}
+
+############################
+## Primary Region — New Subnets
+############################
+
+variable "primary_hub_bastion_subnet_prefix" {
+  type        = string
+  description = "Subnet prefix for AzureBastionSubnet in the primary hub. Must be at least /26."
+}
+
+variable "primary_hub_gateway_subnet_prefix" {
+  type        = string
+  description = "Subnet prefix for GatewaySubnet in the primary hub. Required when create_vpn_gateway = true."
+  default     = ""
+}
+
+variable "primary_app_service_subnet_prefix" {
+  type        = string
+  description = "Subnet prefix for App Service VNet integration in the primary app spoke."
+  default     = ""
+}
+
+variable "primary_private_endpoints_subnet_prefix" {
+  type        = string
+  description = "Subnet prefix for private endpoints in the primary data spoke."
+}
+
+############################
+## Secondary Region — New Subnets
+############################
+
+variable "secondary_hub_bastion_subnet_prefix" {
+  type        = string
+  description = "Subnet prefix for AzureBastionSubnet in the secondary hub. Must be at least /26."
+}
+
+variable "secondary_hub_gateway_subnet_prefix" {
+  type        = string
+  description = "Subnet prefix for GatewaySubnet in the secondary hub. Required when create_vpn_gateway = true."
+  default     = ""
+}
+
+variable "secondary_app_service_subnet_prefix" {
+  type        = string
+  description = "Subnet prefix for App Service VNet integration in the secondary app spoke."
+  default     = ""
+}
+
+variable "secondary_private_endpoints_subnet_prefix" {
+  type        = string
+  description = "Subnet prefix for private endpoints in the secondary data spoke."
+}
+
+############################
+## Optional Services
+############################
+
+variable "create_vpn_gateway" {
+  type        = bool
+  description = "Whether to deploy VPN Gateways in both regions."
+  default     = false
+}
+
+variable "create_app_service" {
+  type        = bool
+  description = "Whether to deploy App Services in both regions."
+  default     = false
+}
+
+############################
+## Container Registry
+############################
+
+variable "registry_name" {
+  type        = string
+  description = "Name of the Azure Container Registry (globally unique, alphanumeric, 5-50 chars)."
+}
+
+############################
+## Monitoring
+############################
+
+variable "monitoring_retention_days" {
+  type        = number
+  description = "Log retention period in days for the Log Analytics Workspace."
+  default     = 30
+}
+
+variable "alert_email" {
+  type        = string
+  description = "Email address for critical operational alerts."
+}
+
+############################
+## Governance
+############################
+
+variable "subscription_id" {
+  type        = string
+  description = "Azure subscription ID for Defender for Cloud and Policy scope."
+}
+
+variable "security_contact_email" {
+  type        = string
+  description = "Email address for Microsoft Defender for Cloud security alerts."
+}
+
+variable "allowed_locations" {
+  type        = list(string)
+  description = "Allowed Azure regions enforced by Azure Policy."
+  default     = ["uksouth", "ukwest"]
+}
+
+variable "ops_principal_id" {
+  type        = string
+  description = "Object ID of the ops Azure AD group granted Contributor RBAC. Set null to skip."
+  default     = null
+}
+
+############################
+## Tags
+############################
+
 variable "tags" {
   type        = map(string)
   description = "Common tags applied to all resources."

@@ -36,7 +36,23 @@ variable "sql_admin_password" {
 
 variable "sql_sku_name" {
   type        = string
-  description = "SKU name for Azure SQL database."
+  description = "SKU name for Azure SQL database (e.g. GP_Gen5_2)."
+}
+
+variable "primary_data_subnet_id" {
+  type        = string
+  description = "Subnet ID of the primary data spoke SQL subnet (used for SQL VNet rule)."
+}
+
+variable "secondary_data_subnet_id" {
+  type        = string
+  description = "Subnet ID of the secondary data spoke SQL subnet (used for SQL VNet rule)."
+}
+
+variable "failover_grace_minutes" {
+  type        = number
+  description = "Grace period in minutes before automatic failover is triggered."
+  default     = 60
 }
 
 variable "tags" {
@@ -44,4 +60,3 @@ variable "tags" {
   description = "Tags applied to SQL resources."
   default     = {}
 }
-

@@ -1,11 +1,22 @@
-name_prefix = "mr-secure-prod"
-tenant_id   = "00000000-0000-0000-0000-000000000000"
+############################
+## PROD Environment — Example Values
+## Copy to terraform.tfvars and update for your deployment.
+## NEVER commit terraform.tfvars — it is in .gitignore.
+############################
+
+name_prefix     = "mr-secure-prod"
+tenant_id       = "00000000-0000-0000-0000-000000000000"
+subscription_id = "00000000-0000-0000-0000-000000000000"
 
 primary_location   = "uksouth"
 secondary_location = "ukwest"
 
 primary_rg_name   = "rg-mr-secure-prod-uksouth"
 secondary_rg_name = "rg-mr-secure-prod-ukwest"
+
+############################
+## Network Address Spaces
+############################
 
 primary_hub_address_space   = "10.20.0.0/16"
 secondary_hub_address_space = "10.21.0.0/16"
@@ -15,27 +26,98 @@ primary_data_spoke_address_space   = "10.23.0.0/16"
 secondary_app_spoke_address_space  = "10.24.0.0/16"
 secondary_data_spoke_address_space = "10.25.0.0/16"
 
+############################
+## Hub Subnets
+############################
+
 primary_hub_firewall_subnet_prefix   = "10.20.0.0/26"
-secondary_hub_firewall_subnet_prefix = "10.21.0.0/26"
+primary_hub_bastion_subnet_prefix    = "10.20.0.64/26"
+primary_hub_gateway_subnet_prefix    = "10.20.0.128/27"   # VPN Gateway enabled for prod
+
+secondary_hub_firewall_subnet_prefix   = "10.21.0.0/26"
+secondary_hub_bastion_subnet_prefix    = "10.21.0.64/26"
+secondary_hub_gateway_subnet_prefix    = "10.21.0.128/27" # VPN Gateway enabled for prod
+
+############################
+## App Spoke Subnets
+############################
 
 primary_app_aks_subnet_prefix   = "10.22.0.0/24"
 secondary_app_aks_subnet_prefix = "10.24.0.0/24"
 
+primary_app_service_subnet_prefix   = "10.22.1.0/24"   # App Service enabled for prod
+secondary_app_service_subnet_prefix = "10.24.1.0/24"   # App Service enabled for prod
+
+############################
+## Data Spoke Subnets
+############################
+
 primary_data_sql_subnet_prefix   = "10.23.0.0/24"
 secondary_data_sql_subnet_prefix = "10.25.0.0/24"
+
+primary_private_endpoints_subnet_prefix   = "10.23.1.0/24"
+secondary_private_endpoints_subnet_prefix = "10.25.1.0/24"
+
+############################
+## AKS
+############################
 
 aks_primary_node_count   = 5
 aks_secondary_node_count = 3
 aks_node_size            = "Standard_DS3_v2"
 
-sql_admin_username = "sqladminuser"
-sql_admin_password = "CHANGE_ME_Str0ng!"
+############################
+## SQL
+## sql_admin_password is NOT set here.
+## It is retrieved from Azure Key Vault (ops-kv-mr-prod) by the CI/CD pipeline.
+## For local runs: export TF_VAR_sql_admin_password="YourStr0ngP@ssword!" before terraform plan/apply
+############################
+
+sql_admin_username = "sqladminprod"
+# sql_admin_password — injected at runtime from Azure Key Vault: secret name "sql-admin-password"
 sql_sku_name       = "GP_Gen5_4"
 
+############################
+## Storage
+############################
+
 storage_account_name_prefix = "mrsecureprodstor"
+
+############################
+## Optional Services
+############################
+
+create_vpn_gateway = true    # Enabled for prod hybrid connectivity
+create_app_service = true    # Enabled for prod
+
+############################
+## Container Registry
+############################
+
+registry_name = "mrsecureprodacr"   # Must be globally unique
+
+############################
+## Monitoring
+############################
+
+monitoring_retention_days = 90    # Extended retention for prod compliance
+alert_email               = "devops-prod@contoso.com"
+
+############################
+## Governance
+############################
+
+security_contact_email = "security-prod@contoso.com"
+allowed_locations      = ["uksouth", "ukwest"]
+ops_principal_id       = "00000000-0000-0000-0000-000000000000"  # Required for prod ops RBAC
+
+############################
+## Tags
+############################
 
 tags = {
   environment = "prod"
   workload    = "multi-region-secure-azure"
+  managed_by  = "terraform"
+  criticality = "high"
 }
-

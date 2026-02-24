@@ -1,3 +1,7 @@
+############################
+## SQL Servers
+############################
+
 resource "azurerm_mssql_server" "primary" {
   name                         = "${var.name_prefix}-sql-primary"
   resource_group_name          = var.primary_rg_name
@@ -20,6 +24,26 @@ resource "azurerm_mssql_server" "secondary" {
   tags                         = var.tags
 }
 
+############################
+## SQL VNet Rules (allow access from data subnets only)
+############################
+
+resource "azurerm_mssql_virtual_network_rule" "primary" {
+  name      = "${var.name_prefix}-vnet-rule-primary"
+  server_id = azurerm_mssql_server.primary.id
+  subnet_id = var.primary_data_subnet_id
+}
+
+resource "azurerm_mssql_virtual_network_rule" "secondary" {
+  name      = "${var.name_prefix}-vnet-rule-secondary"
+  server_id = azurerm_mssql_server.secondary.id
+  subnet_id = var.secondary_data_subnet_id
+}
+
+############################
+## Databases
+############################
+
 resource "azurerm_mssql_database" "primary" {
   name           = "${var.name_prefix}-sqldb"
   server_id      = azurerm_mssql_server.primary.id
@@ -38,7 +62,23 @@ resource "azurerm_mssql_database" "secondary_geo_replica" {
   tags               = var.tags
 }
 
-output "primary_sql_fqdn" {
-  value = azurerm_mssql_server.primary.fully_qualified_domain_name
-}
+############################
+## Auto-Failover Group
+############################
 
+resource "azurerm_mssql_failover_group" "this" {
+  name      = "${var.name_prefix}-fogr"
+  server_id = azurerm_mssql_server.primary.id
+  databases = [azurerm_mssql_database.primary.id]
+
+  partner_server {
+    id = azurerm_mssql_server.secondary.id
+  }
+
+  read_write_endpoint_failover_policy {
+    mode          = "Automatic"
+    grace_minutes = var.failover_grace_minutes
+  }
+
+  depends_on = [azurerm_mssql_database.secondary_geo_replica]
+}
