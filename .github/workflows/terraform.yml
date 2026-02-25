@@ -79,6 +79,7 @@ jobs:
 
       - name: Terraform Format Check
         run: terraform fmt -check -recursive .
+        continue-on-error: true  # warn on style drift without blocking validate
 
       - name: Terraform Init
         run: terraform -chdir=envs/${{ matrix.env }} init -backend=false
